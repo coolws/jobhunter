@@ -141,13 +141,24 @@ class Crawler:
         title = url.string
         title_remove_source = title.rsplit(u'来源')[0] 
         #print "###"+title_remove_source
-        if KEY_WORDS == None:
-            self.rs.sadd('message_urls',url)
-            print title_remove_source
-        else:
-            if Crawler.isContainElements(title_remove_source, KEY_WORDS):
+
+        if FILETER_WORDS == None:
+            if KEY_WORDS == None:
                 self.rs.sadd('message_urls',url)
                 print title_remove_source
+            else:
+                if Crawler.isContainElements(title_remove_source, KEY_WORDS):
+                    self.rs.sadd('message_urls',url)
+                    print title_remove_source
+        else:
+            if not Crawler.isContainElements(title_remove_source, FILETER_WORDS):
+                if KEY_WORDS == None:
+                    self.rs.sadd('message_urls',url)
+                    print title_remove_source
+                else:
+                    if Crawler.isContainElements(title_remove_source, KEY_WORDS):
+                        self.rs.sadd('message_urls',url)
+                        print title_remove_source
 
     def _putUrlsIntoRedis(self, urls):
         for url in urls:

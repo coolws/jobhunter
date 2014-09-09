@@ -21,6 +21,10 @@ REDIS_PORT = 6379
 #KEY_WORDS = (u'百度',u'全职',u'实习')
 KEY_WORDS = None
 
+#过滤掉包含FILTER_WORDS的信息,选择None,表示不过滤信息
+FILETER_WORDS = (u'社招',)
+#FILETER_WORDS = None
+
 #爬取距今天天数之内的数据，如INTERVAL_DAYS=1，表示爬取今天与昨天符合条件的信息
 INTERVAL_DAYS = 1
 
@@ -36,7 +40,7 @@ SEND_MAIL_PASSWORD = "ws123581347"
 # 收件箱
 # 选择单个邮件发送还是群发
 #RECEIVE_MAIL_LIST = ["XXXXXX@XX.com","XXXXX@XX.com",]  #群发
-RECEIVE_MAIL_LIST = ["coolws123@gmail.com",] #单个发送
+RECEIVE_MAIL_LIST = ["349026187@qq.com",] #单个发送
 
 # 发件箱邮箱
 SEND_EMAIL = "coolws123@163.com"
