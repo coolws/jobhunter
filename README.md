@@ -5,6 +5,7 @@ jobhunter
 
 简易的爬虫程序，主要抓取在指定天数内若干bbs上的工作和实习链接，然后发送至目标邮箱中。
 
+注：如果含有KEY_WORDS , FILETER_WORDS 先过滤掉含FILETER_WORDS的信息，在从剩下信息中抓取含有KEY_WORDS的信息
 
 ##功能概述
 
@@ -16,19 +17,25 @@ jobhunter
 
 1. 爬取距今天天数之内的数据(在conf.py中修改INTERVAL_DAYS)
 
-     比如"INTERVAL_DAYS = 2"表示抓取今天，昨天，前天的数据
+      比如"INTERVAL_DAYS = 2"表示抓取今天，昨天，前天的数据
 
 2. 根据关键词抓取信息(在conf.py中修改KEY_WORDS)
 
-     2.1. KEY_WORDS = (u'百度',u'全职',u'实习') 表示抓取含有"百度"，"全职","实习"任何一个关键字的信息
+      2.1. KEY_WORDS = (u'百度',u'全职',u'实习') 表示抓取含有"百度"，"全职","实习"任何一个关键字的信息
 
-     2.2. KEY_WORDS = None 表示抓取所有信息
+      2.2. KEY_WORDS = None 表示抓取所有信息
+
+3. 根据过滤词删除信息(在conf.py中修改FILETER_WORS)
+
+      3.1 FILETER_WORDS = (u'社招'，) 表示在已有信息中删除含有"社招"关键字的信息
+     
+      3.2 FILETER_WORDS = None  表示不删减任何信息
 
 3. 邮件发送(在conf.py中修改RECEIVE_MAIL_LIST)
 
-     3.1. RECEIVE_MAIL_LIST = ["XXXXXX@XX.com","XXXXX@XX.com",]  表示群发邮件
+      3.1. RECEIVE_MAIL_LIST = ["XXXXXX@XX.com","XXXXX@XX.com",]  表示群发邮件
 
-     3.2. RECEIVE_MAIL_LIST = ["coolws123@gmail.com",]           表示发送至指定邮箱
+      3.2. RECEIVE_MAIL_LIST = ["coolws123@gmail.com",]           表示发送至指定邮箱
 
 4. 目标网站(在conf.py中添加，更改HTTP_QUERYS)
 
@@ -56,21 +63,21 @@ jobhunter
 
 1. 运行本程序前请先安装[redis](http://www.redis.io/)
 
-     1.1. windows[下载链接](https://github.com/dmajkic/redis/downloads),如下载redis-2.4.5-win32-win64.zip,选中相应版本，双击redis-server.exe运行
+      1.1. windows[下载链接](https://github.com/dmajkic/redis/downloads),如下载redis-2.4.5-win32-win64.zip,选中相应版本，双击redis-server.exe运行
 
-     1.2. mac/linux[下载链接](http://www.redis.io/download)。可下载2.8.13 stable版。编译见下载页面Installation。运行$ src/redis-server
+      1.2. mac/linux[下载链接](http://www.redis.io/download)。可下载2.8.13 stable版。编译见下载页面Installation。运行$ src/redis-server
 
 2. 安装python依赖包
 
-     2.1. 依赖包包含requests,redis
+      2.1. 依赖包包含requests,redis
 
-     2.2. Mac OS X/Linux安装
+      2.2. Mac OS X/Linux安装
    
            pip install requests
    
            pip install redis
    
-     2.3. windows用户可先安装[pip](https://pip.pypa.io/en/latest/installing.html)，在利用pip安装或者下载依赖包相应的windows文件
+      2.3. windows用户可先安装[pip](https://pip.pypa.io/en/latest/installing.html)，在利用pip安装或者下载依赖包相应的windows文件
 
 
 ##运行
@@ -83,3 +90,4 @@ jobhunter
 
 2. 邮件发送至指定邮箱中，若没收到，可能是延迟，也可能已送入垃圾箱中，可在垃圾箱中查看（绝大多数为后者）
    
+3. 如果运行卡主,请关闭redis,再重新启动redis,再运行程序尝试
