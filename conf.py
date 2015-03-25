@@ -35,12 +35,12 @@ SEND_MAIL_HOST = "smtp.163.com"
 SEND_MAIL_USER = "coolws123"
 
 # 发件箱的密码
-SEND_MAIL_PASSWORD = "ws123581347"
+SEND_MAIL_PASSWORD = "XXXXXXXX"
 
 # 收件箱
 # 选择单个邮件发送还是群发
 #RECEIVE_MAIL_LIST = ["XXXXXX@XX.com","XXXXX@XX.com",]  #群发
-RECEIVE_MAIL_LIST = ["349026187@qq.com",] #单个发送
+RECEIVE_MAIL_LIST = ["XXXXXXX@XX.com",] #单个发送
 
 # 发件箱邮箱
 SEND_EMAIL = "coolws123@163.com"
