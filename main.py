@@ -77,9 +77,9 @@ class Crawler:
                         time = res.parent.previousSibling.string #sjtu
                         match = re.compile('\s+')
                         times = match.split(time)
-                        #print times
-                        monthIndex = Crawler.isMonth(times[0])
-                        if Crawler.isWithinDays(2014,monthIndex,times[1]):
+                        #print times 
+			monthIndex = Crawler.isMonth(times[0])
+                        if Crawler.isWithinDays(2015,monthIndex,times[1]):#time要修改下
                             urls.append(res)
                         else:
                             flag = False
@@ -95,10 +95,9 @@ class Crawler:
             nextUrl['url'] = host + results[0].nextSibling.next['href']
             nextUrl['href'] = href
             nextUrl['source'] = source
-            #print "@@@@@@@@@@@@@@@@@@@@"
-            #print nextUrl
-            #print "@@@@@@@@@@@@@@@@@@@@"    
+            #print "@@@@@@@1@@@@@@@@@@@@@"    
             self.http_querys.append(nextUrl)
+
         if mode==2 and flag == True:
             results = soup.findAll(text=u"上一页")
             nextUrl = {}
@@ -106,9 +105,7 @@ class Crawler:
             nextUrl['url'] = host + results[0].parent['href']
             nextUrl['href'] = href
             nextUrl['source'] = source
-            #print "@@@@@@@@@@@@@@@@@@@@"
-            #print nextUrl
-            #print "@@@@@@@@@@@@@@@@@@@@"
+            #print "@@@@@@@2@@@@@@@@@@@@@"
             self.http_querys.append(nextUrl)
 
 
@@ -129,7 +126,7 @@ class Crawler:
         today = datetime.date.today()
         day = datetime.date(int(year),int(month),int(day))
         delta = today - day
-        days = delta.total_seconds()/24/60/60
+        days = delta.days
         if days <= INTERVAL_DAYS :
             return True
         else:
@@ -140,31 +137,29 @@ class Crawler:
         
         title = url.string
         title_remove_source = title.rsplit(u'来源')[0] 
-        #print "###"+title_remove_source
+	#print "###"+title
 
         if FILETER_WORDS == None:
             if KEY_WORDS == None:
                 self.rs.sadd('message_urls',url)
-                print title_remove_source
+                #print title_remove_source
             else:
                 if Crawler.isContainElements(title_remove_source, KEY_WORDS):
                     self.rs.sadd('message_urls',url)
-                    print title_remove_source
+                    #print title_remove_source
         else:
             if not Crawler.isContainElements(title_remove_source, FILETER_WORDS):
                 if KEY_WORDS == None:
                     self.rs.sadd('message_urls',url)
-                    print title_remove_source
+                    #print title_remove_source
                 else:
-                    if Crawler.isContainElements(title_remove_source, KEY_WORDS):
-                        self.rs.sadd('message_urls',url)
-                        print title_remove_source
+                    if Crawler.isContainElements(title_remove_source, KEY_WORDS):  
+                         self.rs.sadd('message_urls',url)
+			 #print title_remove_source
 
     def _putUrlsIntoRedis(self, urls):
         for url in urls:
             self._putMessageUrlIntoRedis(url)
-    
-    
 
     def _getMessageUrlsFromRedis(self):
         ret = self.rs.smembers('message_urls')
@@ -179,13 +174,13 @@ class Crawler:
             print "none messages to send..."
             return
         sub = "[找工作，找实习] 共有%d条信息" % msg_num
+		#print sub
         msg = MIMEText(content, 'html', 'utf-8')
         msg["Accept-Language"]="zh-CN"
         msg["Accept-Charset"]="ISO-8859-1, utf-8"
         msg['Subject'] = sub
         msg['From'] = SEND_EMAIL
         msg['to'] = ",".join(RECEIVE_MAIL_LIST)
-        
         try:
             smtp = smtplib.SMTP()
             smtp.connect(SEND_MAIL_HOST)
