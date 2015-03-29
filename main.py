@@ -18,12 +18,14 @@ import re
 import redis
 import requests
 import datetime
+from apscheduler.scheduler import Scheduler
 
 class Crawler:
     def __init__(self):
         self.rs = redis.Redis(host=REDIS_IP, port=REDIS_PORT)
         self.http_querys = HTTP_QUERYS
-
+		
+	#获取目标HTML中的招聘信息
     def _parseHtmlToUrls(self, **http_query):
         flag = True
         mode = 0
@@ -110,17 +112,20 @@ class Crawler:
 
 
         return urls
-
+	
+	#判断是否包括标记感兴趣的信息
     @staticmethod
     def isContainElements(str, tup):
         if filter(lambda x: x in str, tup):
             return True
         return False
-
+	
+	#判断是否在感兴趣的时间内
     @staticmethod
     def isMonth(str):
         return timezone.index(str)
-
+	
+	#判断是否在感兴趣的时间内
     @staticmethod
     def isWithinDays(year,month,day):
         today = datetime.date.today()
@@ -132,7 +137,8 @@ class Crawler:
         else:
             return False
 
-    
+	
+	#将获取到的页面数据根据关键词处理后保存在redis中
     def _putMessageUrlIntoRedis(self, url):
         
         title = url.string
@@ -156,18 +162,21 @@ class Crawler:
                     if Crawler.isContainElements(title_remove_source, KEY_WORDS):  
                          self.rs.sadd('message_urls',url)
 			 #print title_remove_source
-
+	
+	#将感兴趣的页面数据保存在redis中
     def _putUrlsIntoRedis(self, urls):
         for url in urls:
             self._putMessageUrlIntoRedis(url)
 
+	#从redis中获取页面的信息
     def _getMessageUrlsFromRedis(self):
         ret = self.rs.smembers('message_urls')
         urls = ""
         for herf in ret:
             urls += herf + "<br>"
         return len(ret), urls
-
+	
+	#发送招聘信息
     def sendMessage(self):
         msg_num, content = self._getMessageUrlsFromRedis()
         if msg_num <= 0 :
@@ -208,5 +217,11 @@ if __name__ == '__main__':
 
     crawler = Crawler()
     crawler.run()
-    crawler.sendMessage()   
+    crawler.sendMessage()
+    #设置爬取招聘信息的间隔时间 #单位/小时
+    sched = Scheduler()
+    sched.daemonic = False 
+    sched.add_interval_job(crawler.run, hours=48)
+    sched.add_interval_job(crawler.sendMessage, hours=48)
+    sched.start()
                          
